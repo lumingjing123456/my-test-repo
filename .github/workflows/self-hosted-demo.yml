@@ -1,0 +1,26 @@
+name: Self-Hosted Runner Demo
+
+on: [push] 
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 
+
+      - name: Print a greeting
+        run: |
+          echo "Hello World! This job is running on my own VM!"
+          echo "The runner's hostname is $(hostname)"
+          echo "The IP is $(hostname -I)"
+
+      - name: Deploy to Test Server via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.TEST_SERVER_IP }} # 172.16.212.86
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "README.md" 
+          target: "/tmp/"
